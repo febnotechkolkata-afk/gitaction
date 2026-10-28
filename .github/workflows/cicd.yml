@@ -1,0 +1,36 @@
+name: Codespaces Triggered CI
+
+# Triggers the workflow whenever you push code from Codespaces to the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    # The virtual machine type the pipeline runs on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Clones your repository code into the runner
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      # Step 2: Sets up the Python runtime environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # Speeds up future runs by caching dependencies
+
+      # Step 3: Installs the packages listed in requirements.txt (like pytest)
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Executes your test suite. If any tests fail, the workflow fails.
+      - name: Run Automated Tests
+        run: |
+          pytest test_app.py
